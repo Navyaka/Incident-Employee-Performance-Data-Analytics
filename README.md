@@ -126,8 +126,8 @@ This dashboard helps the organization understand their employee performance bett
    SELECT Count(DISTINCT Id) AS 'No of Incidents'
    FROM   incident
   ```
-  ![Total Incident Count](https://github.com/Navyaka/Incident-Tracker/assets/79855759/39999fd8-cbff-4e0e-820f-8ee6944952bc)
-  
+  <p style="text-align: center"><img src="https://github.com/Navyaka/Incident-Tracker/assets/79855759/39999fd8-cbff-4e0e-820f-8ee6944952bc"></p>
+
   ```
   --Total Active Incident Count: Count of Distinct  Incidents which are Currently not resolved
   SELECT Count(DISTINCT Id) AS 'No of Active Incidents'
