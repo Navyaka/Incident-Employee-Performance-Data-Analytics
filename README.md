@@ -1,5 +1,6 @@
-# Incident-Tracker
-This is an interactive Power BI dashboard to track incidents of a software company and it's employee performance.
+# Incident & Employee Performance Data Analytics 
+
+This is an interactive Power BI dashboard to track incidents of a software company and it's employees performance.
 
 ## Scenario
 A product-based software company handles customer queries through a Customer Service portal. All the users raise Incidents if they encounter any problem with the product. So, the company wants to know the statistics and reports through a dashboard to understand their employee performance and identify areas for improvement.
@@ -8,7 +9,7 @@ A product-based software company handles customer queries through a Customer Ser
 
 This dashboard helps the organization understand their employee performance better. The problem is that the company needs a database to create a dashboard. So, the company hires a data engineer to create a database management system in SSMS, handle the data orchestration with the existing data first, and then make a visualization dashboard through Power BI and draw required insights.
 
-### The formulation of a dashboard via Power BI entails the following procedural steps
+## The formulation of a dashboard via Power BI entails the following procedural steps
 
 - **SSMS and SQL Server Installation:** Download and Install SQL Server Management Studio and SQL server. Set up SQL server Connection in SSMS using credentials or windows authentication (Skip this step if already installed).
 - **Database Creation:** Create a new Database named [Incident_Data]
@@ -126,7 +127,7 @@ This dashboard helps the organization understand their employee performance bett
    SELECT Count(DISTINCT Id) AS 'No of Incidents'
    FROM   incident
   ```
-  <p style="text-align: center"><img src="https://github.com/Navyaka/Incident-Tracker/assets/79855759/39999fd8-cbff-4e0e-820f-8ee6944952bc"></p>
+    ![Total Incident Count](https://github.com/Navyaka/Incident-Tracker/assets/79855759/39999fd8-cbff-4e0e-820f-8ee6944952bc)
 
   ```
   --Total Active Incident Count: Count of Distinct  Incidents which are Currently not resolved
@@ -135,6 +136,8 @@ This dashboard helps the organization understand their employee performance bett
   WHERE  incident_status_id <> 6
 
   ```
+  ![Total Active Incident Count](https://github.com/Navyaka/Incident-Tracker/assets/79855759/228b93eb-9579-4a7d-a705-7f86e03a32e7)
+
   ```
   --Total resolved   Incident Count: Count of Distinct  Incidents which are  resolved
    SELECT Count(DISTINCT Id) AS 'No of Resolved Incidents'
@@ -142,6 +145,8 @@ This dashboard helps the organization understand their employee performance bett
    WHERE  incident_status_id = 6
 
   ```
+  ![Total resolved   Incident Count](https://github.com/Navyaka/Incident-Tracker/assets/79855759/c1706791-28aa-4f18-babe-600cda2fe9bf)
+
   ```
   --Total Incident Count Priority: Count of Distinct  Incidents categorized by priority.
    SELECT priority,
@@ -149,6 +154,8 @@ This dashboard helps the organization understand their employee performance bett
   FROM   incident
   GROUP  BY priority 
   ```
+  ![Total Incident Count Priority](https://github.com/Navyaka/Incident-Tracker/assets/79855759/f714e951-8828-4222-a664-fd41cb70ca38)
+
   ```
   --Total Incident Count Status: Count of Distinct  Incidents categorized by Status.
   SELECT i_s.status,
@@ -158,6 +165,8 @@ This dashboard helps the organization understand their employee performance bett
                ON i_s.id = i.incident_status_id
   GROUP  BY i_s.status 
   ```
+  ![Total Incident Count Status](https://github.com/Navyaka/Incident-Tracker/assets/79855759/04233e2d-1d92-47fc-b491-1c4dd8f9dd72)
+
   ```
   --Total resolved   Incident Count Issue Type: Count of Distinct  Incidents categorized by Issue Type.
   SELECT c.issue_type,
@@ -168,6 +177,8 @@ This dashboard helps the organization understand their employee performance bett
   GROUP  BY c.issue_type 
 
   ```
+  ![Total resolved   Incident Count Issue Type](https://github.com/Navyaka/Incident-Tracker/assets/79855759/1a77387a-4a6f-4682-994a-110448b470e9)
+
   ```
   --Total resolved   Incident Count Department: Count of Distinct  Incidents categorized by Department.
   SELECT d.department_name,
@@ -181,6 +192,8 @@ This dashboard helps the organization understand their employee performance bett
   GROUP  BY d.department_name
 
   ```
+  ![Total resolved   Incident Count Department](https://github.com/Navyaka/Incident-Tracker/assets/79855759/7c189a00-5b1b-40ff-ae33-c31b90d5d9bb)
+
   ```
   --Department wise Category Incident Count: Break down Distinct incident counts by 'department' and 'type of issue'.
   SELECT d.department_name,
@@ -198,6 +211,8 @@ This dashboard helps the organization understand their employee performance bett
   ORDER  BY d.department_name
 
   ```
+  ![Department wise Category Incident Count](https://github.com/Navyaka/Incident-Tracker/assets/79855759/5fe1fc21-ef8a-44c2-895d-b8611ea416af)
+
   ```
   --Average Resolution Time for each Type of Priority: Calculate the average time taken to resolve incidents based on priority levels.
    SELECT priority,
@@ -207,6 +222,7 @@ This dashboard helps the organization understand their employee performance bett
         WHERE  incident_status_id = 6
   Group By priority
   ```
+  ![Average Resolution Time for each Type of Priority](https://github.com/Navyaka/Incident-Tracker/assets/79855759/9f3fb1d4-ab82-40ee-89a4-ad6ca9c31322)
   ```
   --Closed Incidents without Proper Resolution: Identify incidents that were closed without a proper resolution.
   SELECT Id, Reopen_Count
@@ -214,6 +230,8 @@ This dashboard helps the organization understand their employee performance bett
   WHERE  reopen_count > 0
   ORDER  BY reopen_count DESC 
   ```
+  ![Closed Incidents without Proper Resolution](https://github.com/Navyaka/Incident-Tracker/assets/79855759/5fcd4f25-228c-4923-92b2-6ff462d832d8)
+
   ```
   --Employee Leaderboard: Rank employees based on their incident count and display Employee Names with Rank, Incident count, Average resolution time in days.
   Select Top 15 e.User_Name 'User Name',
@@ -227,6 +245,8 @@ This dashboard helps the organization understand their employee performance bett
   where Incident_Status_Id = 6
   group by e.User_Name
   ```
+  ![Employee Leaderboard](https://github.com/Navyaka/Incident-Tracker/assets/79855759/d52ce94d-e308-44d3-8c6a-2af4e909b22c)
+
   ```
   --View for Incident Statistics: Create a view that includes detailed statistics for each resolved incident, such as the Id, Name of employee resolved, opened time, resolved time, time taken to resolve, priority, and average time taken for that particular priority type of that incident.
   CREATE VIEW Incident_Statistics AS
@@ -244,6 +264,8 @@ This dashboard helps the organization understand their employee performance bett
   SELECT * FROM Incident_Statistics
 
   ```
+  ![View for Incident Statistics](https://github.com/Navyaka/Incident-Tracker/assets/79855759/bc207498-fe24-44f8-89a9-68f7003ac15f)
+
   ```
   --Stored Procedure for Employee Employee Leaderboard on Priority(Input Parameter): Develop a stored procedure that generates a leaderboard of employees based on incident count with priority as input parameter. Display Employee Names with Rank, Incident count, Priority, Average resolution time in days.
   Create Procedure GetEmployeeLeaderboardByPriority
@@ -270,6 +292,8 @@ This dashboard helps the organization understand their employee performance bett
 
   EXEC GetEmployeeLeaderboardByPriority '1 - Critical'
   ```
+  ![Stored Procedure for Employee Employee Leaderboard on Priority(Input Parameter)](https://github.com/Navyaka/Incident-Tracker/assets/79855759/9e51ec40-8a94-4860-843b-e6ae4790cfd9)
+
 
 - Connect to SQL server and import data from SQL Server to Power BI
 - **Data Visualization Power BI Dashboard:** 
