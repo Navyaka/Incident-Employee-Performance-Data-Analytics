@@ -1,0 +1,14 @@
+--First Update all rows of ‘Resolved_At’ to ‘NULL’ in the ‘Incident’ Table where ‘Resolved_By’ value is ‘0’. 
+Update Incident set Resolved_At = NULL where Resolved_By = 0
+
+--Next, Update all rows of ‘Resolved_By’ to ‘NULL’ in the ‘Incident’ Table where ‘Resolved_By’ value is ‘0’. 
+Update Incident set Resolved_By = NULL where Resolved_By = 0
+
+--Now, Insert (3142, ‘Jane Foster’, 3) details into the ‘Employee’ table.
+Insert into Employee(Id, User_Name, Department_Id) Values (3142,'Jane Foster', 3)
+
+--Verify Insertion using select query.
+select * from Employee where id=3142
+
+--Delete that record from the table.
+Delete from Employee where Id=3142

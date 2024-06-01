@@ -1,0 +1,45 @@
+CREATE TABLE Department (
+    Id INT PRIMARY KEY,
+    Department_Name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Category (
+    Id INT PRIMARY KEY,
+    Issue_Type VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Incident_Status (
+    Id INT PRIMARY KEY,
+    Status VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Employee (
+    Id INT PRIMARY KEY,
+    User_Name VARCHAR(255) NOT NULL,
+    Department_Id INT NOT NULL,
+    FOREIGN KEY (Department_Id) REFERENCES Department(Id)
+);
+
+CREATE TABLE Incident (
+    Id VARCHAR(255) PRIMARY KEY NOT NULL,
+    Incident_Status_Id INT NOT NULL,
+    Reassignment_Count INT,
+    Reopen_Count INT,
+    Made_SLA VARCHAR(255),
+    Created_By INT NOT NULL,
+    Created_At VARCHAR(255) NOT NULL,
+    Assigned_To INT,
+    Updated_By INT,
+    Updated_At VARCHAR(255),
+    Resolved_By INT NULL,
+    Resolved_At VARCHAR(255) NULL,
+    Category INT NOT NULL,
+    Urgency VARCHAR(255) NOT NULL,
+    Priority VARCHAR(255) NOT NULL,
+    FOREIGN KEY (Incident_Status_Id) REFERENCES Incident_Status(Id),
+    FOREIGN KEY (Created_By) REFERENCES Employee(Id),
+    FOREIGN KEY (Assigned_To) REFERENCES Employee(Id),
+    FOREIGN KEY (Updated_By) REFERENCES Employee(Id),
+    FOREIGN KEY (Resolved_By) REFERENCES Employee(Id),
+    FOREIGN KEY (Category) REFERENCES Category(Id)
+);

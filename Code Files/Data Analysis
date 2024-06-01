@@ -1,0 +1,241 @@
+--Total Incident Count: COunt of Distint Incidents
+SELECT Count(DISTINCT Id) AS 'No of Incidents'
+FROM   incident
+
+--Total Active Incident Count: Count of Distint Incidents which are Currently not resolved
+SELECT Count(DISTINCT Id) AS 'No of Active Incidents'
+FROM   incident
+WHERE  incident_status_id <> 6
+
+--Total resoslved Incident Count: Count of Distint Incidents which are  resolved
+SELECT Count(DISTINCT Id) AS 'No of Resolved Incidents'
+FROM   incident
+WHERE  incident_status_id = 6 
+
+--Total Incident Count Priority: Count of Distint Incidents categorized by priority.
+SELECT priority,
+       Count(DISTINCT Id) AS 'No of Incidents'
+FROM   incident
+GROUP  BY priority 
+
+--Total Incident Count Status: Count of Distint Incidents categorized by Status.
+SELECT i_s.status,
+       Count(DISTINCT i.Id) AS 'No of Incidents'
+FROM   incident i
+       INNER JOIN incident_status i_s
+               ON i_s.id = i.incident_status_id
+GROUP  BY i_s.status 
+
+--Total resoslved Incident Count Issue Type: Count of Distint Incidents categorized by Issue Type.
+SELECT c.issue_type,
+       Count(DISTINCT i.Id) AS 'No of Incidents'
+FROM   incident i
+       INNER JOIN category c
+               ON c.id = i.incident_status_id
+GROUP  BY c.issue_type 
+
+--Total resoslved Incident Count Department: Count of Distint Incidents categorized by Department.
+SELECT d.department_name,
+       Count(DISTINCT i.Id) AS 'No of Incidents'
+FROM   incident i
+       INNER JOIN employee e
+               ON e.id = i.created_by
+       INNER JOIN department d
+               ON d.id = e.department_id
+WHERE Incident_Status_Id = 6
+GROUP  BY d.department_name
+
+--Department wise Category Incident Count: Break down Distinct incident counts by ‘department’ and ‘type of issue’.
+SELECT d.department_name,
+       c.issue_type,
+       Count(DISTINCT i.Id) AS 'No of Incidents'
+FROM   incident i
+       INNER JOIN employee e
+               ON e.id = i.created_by
+       INNER JOIN category c
+               ON c.id = i.incident_status_id
+       INNER JOIN department d
+               ON d.id = e.department_id
+GROUP  BY d.department_name,
+          c.issue_type
+ORDER  BY d.department_name 
+
+--Average Resolution Time for each Type of Priority: Calculate the average time taken to resolve incidents based on priority levels.
+-- SELECT i.priority,
+--        Avg(Datediff(day, i.created_at, i.resolved_at)) AS
+--        'Average Days to Resolve'
+-- FROM   (SELECT DISTINCT Id      AS Id,
+--                         priority         AS Priority,
+--                         Min(created_at)  AS Created_At,
+--                         Max(resolved_at) AS Resolved_At
+--         FROM   incident
+--         WHERE  incident_status_id = 6
+--         GROUP  BY Id,
+--                   priority) i
+-- GROUP  BY i.priority
+
+SELECT priority,
+       Avg(Datediff(day, Created_At, Resolved_At)) AS
+       'Average Days to Resolve'
+FROM   incident
+        WHERE  incident_status_id = 6
+Group By priority
+
+--Closed Incidents without Proper Resolution: Identify incidents that were closed without a proper resolution.
+SELECT Id, Reopen_Count
+FROM   incident
+WHERE  reopen_count > 0
+ORDER  BY reopen_count DESC 
+
+--Employee Leaderboard: Rank employees based on their incident count and average resolution time.
+-- WITH employeestats
+--      AS (SELECT a.resolved_by,
+--                 Count(*) AS Incident_Count,
+--                 Avg(Datediff(day, a.created_at, a.resolved_at)) AS Avg_Resolution_Time_Days
+--          FROM   (SELECT DISTINCT Id,
+--                                  resolved_by,
+--                                  Min(created_at)
+--                                    OVER (
+--                                      partition BY Id) AS Created_At,
+--                                  Max(resolved_at)
+--                                    OVER (
+--                                      partition BY Id) AS Resolved_At
+--                  FROM   incident
+--                  WHERE  incident_status_id = 6) a
+--          WHERE  a.resolved_at IS NOT NULL
+--          GROUP  BY a.resolved_by)
+-- SELECT e.user_name,
+--        Rank()
+--          OVER (
+--            ORDER BY es.incident_count DESC) AS Incident_Count_Rank,
+--        es.incident_count,
+--        es.avg_resolution_time_days AS Avg_Resolution_Time
+-- FROM   employeestats es
+--        INNER JOIN employee e
+--                ON e.id = es.resolved_by;
+
+Select Top 15 e.User_Name 'User Name',
+       Rank()
+         OVER (
+           ORDER BY Count(i.ID) DESC) AS 'Rank',
+       count(i.Id) 'No of Resolved Incidents',
+Avg(Datediff(day, i.Created_At, i.Resolved_At)) AS 'Avg Resolution Time Days'
+from Incident i
+left join Employee	e on e.id = i.Resolved_By
+where Incident_Status_Id = 6
+group by e.User_Name
+
+
+
+-- SELECT DISTINCT Id,Reassignment_Count,Reopen_Count,Made_SLA,Created_By,Assigned_To,Updated_By,Updated_At,Resolved_By, Category,Urgency,Priority
+--                 Min(created_at)
+--                 OVER (
+--                     partition BY Id) AS Created_At,
+--                 Max(resolved_at)
+--                 OVER (
+--                     partition BY Id) AS Resolved_At
+-- FROM   incident
+-- WHERE  incident_status_id = 6
+
+
+-- select *
+-- from (SELECT			Id,
+-- 				incident_status_id,
+--                 reassignment_count,
+--                 reopen_count,
+--                 made_sla,
+--                 created_by,
+-- 				Created_At,
+--                 assigned_to,
+--                 updated_by,
+--                 updated_at,
+--                 resolved_by,
+-- 				Resolved_At,
+--                 category,
+--                 urgency,
+--                 priority,
+--                 ROW_NUMBER() OVER ( partition BY Id order by Resolved_at desc) AS rn
+-- FROM            incident
+-- WHERE           incident_status_id = 6) a
+-- where rn =1 
+
+
+
+-- select *
+-- from (SELECT	Id,
+-- 				incident_status_id,
+--                 reassignment_count,
+--                 reopen_count,
+--                 made_sla,
+--                 created_by,
+-- 				Created_At,
+--                 assigned_to,
+--                 updated_by,
+--                 updated_at,
+--                 resolved_by,
+-- 				Resolved_At,
+--                 category,
+--                 urgency,
+--                 priority,
+--                 ROW_NUMBER() OVER ( partition BY Id order by updated_at desc) AS rn
+-- FROM            incident
+-- WHERE           incident_status_id <> 6) a
+-- where rn =1 and Id not in (select Id
+-- from (SELECT	Id,
+--                 ROW_NUMBER() OVER ( partition BY incident_id order by Resolved_at desc) AS rn
+-- FROM            incident
+-- WHERE           incident_status_id = 6) a
+-- where rn =1)
+
+-- Select Top 1098 i.Id Id, e.User_Name 'User Name', i.Created_At, i.Resolved_At, Datediff(day, i.Created_At, i.Resolved_At) as Resolved_In, i.Priority,pa.[Avg Resolution Time Days]
+-- from Incident i
+-- Inner join Employee	e on e.id = i.Resolved_By
+-- Inner Join (Select Priority,  
+-- Avg(Datediff(day, Created_At, Resolved_At)) AS 'Avg Resolution Time Days'
+-- from Incident
+-- where Incident_Status_Id = 6
+-- group by Priority) Pa on pa.Priority = i.Priority
+-- where Incident_Status_Id = 6
+-- group by i.id, e.User_Name, i.Created_At, i.Resolved_At, Datediff(day, i.Created_At, i.Resolved_At), i.Priority, pa.[Avg Resolution Time Days]
+-- Order by Resolved_In
+
+
+-- For View
+CREATE VIEW Incident_Statistics AS
+Select i.Id Id, e.User_Name 'User Name', i.Created_At, i.Resolved_At, Datediff(day, i.Created_At, i.Resolved_At) as Resolved_In, i.Priority, pa.[Avg Resolution Time Days]
+from Incident i
+Inner join Employee	e on e.id = i.Resolved_By
+Inner Join (Select Priority,  
+Avg(Datediff(day, Created_At, Resolved_At)) AS 'Avg Resolution Time Days'
+from Incident
+where Incident_Status_Id = 6
+group by Priority) Pa on pa.Priority = i.Priority
+where Incident_Status_Id = 6
+group by i.id, e.User_Name, i.Created_At, i.Resolved_At, Datediff(day, i.Created_At, i.Resolved_At), i.Priority, pa.[Avg Resolution Time Days]
+
+SELECT * FROM Incident_Statistics
+
+--For SP
+Alter Procedure GetEmployeeLeaderboardByPriority
+    @Priority NVARCHAR(50)
+AS
+BEGIN
+SELECT
+        e.User_Name, i.Priority,
+		Rank()
+         OVER (
+          Partition by i.Priority ORDER BY Count(i.ID) DESC) AS 'Rank',
+        COUNT(i.Id) AS Incident_Count,
+        AVG(DATEDIFF(Day, i.Created_At, i.Resolved_At)) AS Avg_Resolution_Time_Days
+    FROM
+        Incident i
+    INNER JOIN
+        Employee e ON i.Resolved_By = e.Id
+    WHERE
+        i.Priority = @Priority AND 
+		i.Resolved_At IS NOT NULL
+    GROUP BY
+        e.User_Name,i.Priority
+END;
+
+EXEC GetEmployeeLeaderboardByPriority '1 - Critical'
