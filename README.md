@@ -1,5 +1,5 @@
 # Incident-Tracker
-This is a Power BI dashboard to track incidents of a software company and it's employee performance.
+This is an interactive Power BI dashboard to track incidents of a software company and it's employee performance.
 
 ## Scenario
 A product-based software company handles customer queries through a Customer Service portal. All the users raise Incidents if they encounter any problem with the product. So, the company wants to know the statistics and reports through a dashboard to understand their employee performance and identify areas for improvement.
